@@ -1,0 +1,21 @@
+CREATE TABLE `equipment` (
+  `id` int(11) NOT NULL,
+  `mech_id` int(11) DEFAULT NULL,
+  `pillar` varchar(45) DEFAULT NULL,
+  `row` int(11) DEFAULT NULL,
+  `sheet` varchar(45) DEFAULT NULL,
+  `location` varchar(45) DEFAULT NULL,
+  `weight` decimal(10,2) DEFAULT NULL,
+  `ammo` int(11) DEFAULT NULL,
+  `mod1` varchar(45) DEFAULT NULL,
+  `mod2` varchar(45) DEFAULT NULL,
+  `mod3` varchar(45) DEFAULT NULL,
+  `mod4` varchar(45) DEFAULT NULL,
+  `mod5` varchar(45) DEFAULT NULL,
+  `mod6` varchar(45) DEFAULT NULL,
+  `mod7` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  KEY `mech_id_idx` (`mech_id`),
+  CONSTRAINT `mech_id` FOREIGN KEY (`mech_id`) REFERENCES `mech` (`mech_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

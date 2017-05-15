@@ -1,0 +1,21 @@
+CREATE TABLE `mech` (
+  `mech_id` int(11) NOT NULL,
+  `mech_name` varchar(45) NOT NULL,
+  `RLFArmour` int(11) DEFAULT NULL,
+  `RLBArmour` int(11) DEFAULT NULL,
+  `LLFArmour` int(11) DEFAULT NULL,
+  `LLBArmour` int(11) DEFAULT NULL,
+  `CTFArmour` int(11) DEFAULT NULL,
+  `CTBArmour` int(11) DEFAULT NULL,
+  `RSFArmour` int(11) DEFAULT NULL,
+  `RSBArmour` int(11) DEFAULT NULL,
+  `LSFArmour` int(11) DEFAULT NULL,
+  `LSBArmour` int(11) DEFAULT NULL,
+  `RAFArmour` int(11) DEFAULT NULL,
+  `RABArmour` int(11) DEFAULT NULL,
+  `LAFArmour` int(11) DEFAULT NULL,
+  `LABArmour` int(11) DEFAULT NULL,
+  PRIMARY KEY (`mech_id`),
+  UNIQUE KEY `idMech_UNIQUE` (`mech_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+SELECT * FROM `battle-tech`.mech;
