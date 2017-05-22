@@ -38,6 +38,8 @@ public class EquipmentServiceImpl implements EquipmentService{
 		return repository.findById(id);
 	}
 	
-	
+	//probably need to add a string for sheet for some of these. for example 
+	//ok wait maybe not. This is database stuff. it does nothing with the spreadsheets. 
+	//so 
 
 }

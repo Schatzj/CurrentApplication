@@ -25,9 +25,17 @@ public class MechLabController {
 	@RequestMapping(value = {"MechLab"})
 	public String home(Model model) {
 		List<String> ballistics = sheetsService.getAllMechBallisticsAsList();
+//		String[][] ball = sheetsService.getAllMechBallistics();
+//		for(int i = 0; i<ball.length; i++){
+//			for(int j = 0; j<ball[i].length; j++){
+//				System.out.println("ball is: " + ball[i][j] + " i and j " + i + " " + j);
+//			}
+//		}
 		List<Mech> mechs = service.getAllMechs();
 		model.addAttribute("Mechs", mechs);
 		model.addAttribute("Ballistics", ballistics);
+		
+//		sheetsService.getGunByName("foo");
 		
 		return "home/MechLab";
 	}

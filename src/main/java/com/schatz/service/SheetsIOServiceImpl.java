@@ -23,68 +23,45 @@ public class SheetsIOServiceImpl implements SheetsIOService {
 	@Value("${sheets.id.string}")
 	private String id;
 	
-	/* (non-Javadoc)
-	 * @see com.schatz.service.SheetsIOService#test()
-	 */
-	public void test(){
-		try{
-			Sheets.Spreadsheets sheet = service.getSheetsService().spreadsheets();
-			ValueRange response = sheet.values().get(id, "A1").execute();
-			
-//			System.out.println("the response is: " + response.toPrettyString());
-		
-		}catch(IOException ioe){
-			System.out.println("Something went wrong io " + ioe);
-		}catch(Exception e){
-			System.out.println("something went wrong maybe credentials? " + e);
-		}
-	}
+	private String[][] allBallisticsByName = null;
 
+	/**
+	 * returns a 2d string array. Where the first array contains an array for each gun
+	 *the second array contains the cell number of the gun, and the gun name. 
+	 *So [0][0] = 7
+	 *and [0][1] = c-ac20
+	 *and [1]... contains info for C-ac10. 
+	 */
 	public String[][] getAllMechBallistics() {
-//		List<List<String>>result = new ArrayList<String>(); 
-		
-		try{
-			Sheets.Spreadsheets sheet = service.getSheetsService().spreadsheets();
-			ValueRange response = sheet.values().get(id, "Weapons!A1:A250").execute();
-			
-			List<List<Object>> input = response.getValues();
-			
-			String[][] guns = new String[(input.size()/4) + 1][2];
-			
-//			for(int i = 0; i<input.size(); i++){
-//				for(int j = 0; j<input.get(i).size(); j++){
-//					System.out.println("[" + i +"]" + "[" + j + "] " + input.get(i).get(j));
-//				}
-//			}
-			
-//			System.out.println("guns.size is: " + guns.length);
-			int index = 0;
-			for(int i = 6; i<input.size(); i=i+4){
-//				System.out.println("index is: " + i);
-				Integer cell = i + 1;
-				guns[index][0] = cell.toString();
-				guns[index][1] = input.get(i).get(0).toString();
-				index = index + 1;
-				if(i == 74){
-					i = 76;
+		if (allBallisticsByName == null) {
+			try {
+				Sheets.Spreadsheets sheet = service.getSheetsService().spreadsheets();
+				ValueRange response = sheet.values().get(id, "Weapons!A1:A250").execute();
+
+				List<List<Object>> input = response.getValues();
+
+				String[][] guns = new String[(input.size() / 4) + 1][2];
+				int index = 0;
+				for (int i = 6; i < input.size(); i = i + 4) {
+					Integer cell = i + 1;
+					guns[index][0] = cell.toString();
+					guns[index][1] = input.get(i).get(0).toString();
+					index = index + 1;
+					if (i == 74) {
+						i = 76;
+					}
 				}
+				allBallisticsByName = guns;
+
+			} catch (IOException ioe) {
+				System.out.println("Something went wrong io " + ioe);
+				return null;
+			} catch (Exception e) {
+				System.out.println("something went wrong maybe credentials? " + e);
+				return null;
 			}
-			
-//			System.out.println("*******************************************");
-//			for(int i = 0; i<guns.length; i++){
-//				System.out.println(guns[i][0]);
-//				System.out.println(guns[i][1]);
-//			}
-			return guns;
-			
-		}catch(IOException ioe){
-			System.out.println("Something went wrong io " + ioe);
-		}catch(Exception e){
-			System.out.println("something went wrong maybe credentials? " + e);
 		}
-		return null;
-		
-//		return guns;
+		return allBallisticsByName;
 	}
 
 	public String getDistance() {
@@ -130,6 +107,7 @@ public class SheetsIOServiceImpl implements SheetsIOService {
 		try{
 			Sheets.Spreadsheets sheet = service.getSheetsService().spreadsheets();
 			result = sheet.values().get(id, range).execute();
+//			result.setMajorDimension(majorDimension)
 		}catch(IOException ioe){
 			System.out.println("Something went wrong io " + ioe);
 			result =  null;
@@ -161,13 +139,49 @@ public class SheetsIOServiceImpl implements SheetsIOService {
 		return result;
 	}
 
-	public List<String> getAllMechBallisticsAsList() {
-		List<String>result = new ArrayList<String>();
-		String[][] allMechBallistics = getAllMechBallistics();
-		for(int i = 0; i<allMechBallistics.length; i++){
-			result.add(allMechBallistics[i][1]);
+	public boolean isBallistic(String name){
+		if(allBallisticsByName == null){
+			getAllMechBallistics();
 		}
-		return result;
+		for(int i = 0; i<allBallisticsByName.length; i++){
+			for(int j = 1; j<allBallisticsByName[i].length; j++){
+				if(allBallisticsByName[i][j].equalsIgnoreCase(name)){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public int getGunstartCell(String gunName) {
+		if(allBallisticsByName == null){
+			getAllMechBallistics();
+		}
+		for(int i = 0; i<allBallisticsByName.length; i++){
+			for(int j = 1; j<allBallisticsByName[i].length; j++){
+				if(allBallisticsByName[i][j].equalsIgnoreCase(gunName)){
+					return Integer.valueOf(allBallisticsByName[i][j-1]);
+				}
+			}
+		}
+		return -1;
+	}
+
+	public ValueRange getGunByName(String name) {
+		return getGun(getGunstartCell(name));
+	}
+
+	public List<String> getAllMechBallisticsAsList() {
+		List<String> allBallistics = new ArrayList<String>();
+		if(allBallisticsByName == null){
+			getAllMechBallistics();
+		}
+		for(int i = 0; i<allBallisticsByName.length; i++){
+			for(int j = 1; j<allBallisticsByName[i].length; j++){
+				allBallistics.add(allBallisticsByName[i][j]);
+			}
+		}
+		return allBallistics;
 	}
 
 }
